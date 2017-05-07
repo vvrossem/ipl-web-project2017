@@ -162,6 +162,19 @@
 			return $table;
 		}
 		
+		// select student regarding BLOC
+		public function select_students_serie($bloc){
+			$query = 'SELECT * FROM students WHERE  bloc=' . $this->_db->quote ( $bloc );
+			$result = $this->_db->query ( $query );
+			$table = array ();
+			if ($result->rowcount () != 0) {
+				while ( $row = $result->fetch () ) {
+					$table [] = new Students ( $row->email, $row->name, $row->first_name, $row->bloc, $row->code_serie );
+				}
+			}
+			return $table;
+		}
+		
 		// insert students into the database
 		public function insert_students($email, $name, $first_name, $bloc) {
 			$query = 'INSERT INTO students(email,name,first_name,bloc)
@@ -175,7 +188,7 @@
 		}
 		
 		// update students
-		public function update_student($email,$code_serie) {
+		public function update_student_serie($email,$code_serie) {
 			$query = 'UPDATE students SET code_serie=:code_serie WHERE email=:email';
 			$qp = $this->_db->prepare ( $query );
 			$qp->bindValue ( ':email', $email );
@@ -256,10 +269,9 @@
 			$qp->execute ();
 		}
 		
-		public function delete_course($bloc){
-			$query = 'DELETE FROM courses WHERE bloc=:bloc';
+		public function delete_course(){
+			$query = 'DELETE FROM courses';
 			$qp = $this->_db->prepare ( $query );
-			$qp->bindValue ( ':bloc', $bloc );
 			$qp->execute ();
 		}
 		
@@ -273,6 +285,15 @@
 			$qp->execute ();
 		}
 		
+		public function serie_exists($code_serie) {
+			$query = 'SELECT * from series WHERE code_serie='.$this->_db->quote($code_serie);
+			$result = $this->_db->query($query);
+			$exists = false;
+			if ($result->rowcount()!=0) {
+				$exists = true;
+			}
+			return $exists;
+		}
 
 		
 		//select course regarding code

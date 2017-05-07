@@ -4,6 +4,8 @@
 
 		<form action="index.php?action=bloc" method="post">
 		<table id="tableStudents">
+		<input type="submit" name="series_update" value="Update">
+		
 			<thead>
 				<tr>
 					<th>Nom</th>
@@ -38,7 +40,6 @@
 				?>
 			</tbody>
 		</table>
-		<input type="submit" name="series_update" value="Update">
 		</form>			
 	</article>
 </section>

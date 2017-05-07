@@ -4,25 +4,39 @@ class BlocController {
 	}
 	public function run() {
 		
-		// Variables
+		// Variables COMMUNES
 		$notification = '';
 		$allcourses_array = '';
-		$bloc1_courses_array = '';
-		$bloc2_courses_array = '';
-		$bloc3_courses_array = '';
 		$students_array = '';
 		$series_array = '';
 		$bloc_series_array = '';
-		$bloc1 = 'Bloc1';
-		$bloc2 = 'Bloc2';
-		$bloc3 = 'Bloc3';
 		$bloc_selected = '';
 		$number_of_series = '';
+		$bloc_students_array = '';
+		
+		// Variables BLOC1 
+		$bloc1_courses_array = '';
+		$bloc1 = 'Bloc1';
 		
 		
-		// ------------PROGRAMME COURS----------------------
+		// Variables BLOC2 
+		$bloc2_courses_array = '';
+		$bloc2 = 'Bloc2';
 		
-		//ADD COURSES
+		
+		// Variables BLOC3 
+		$bloc3_courses_array = '';
+		$bloc3 = 'Bloc3';
+		
+		// Variables BLOCS Manager
+		
+		
+		
+		###---------------------------------------------------------------------------------------------------------------------###
+		###------------------------------------------------------------COURSES--------------------------------------------------###
+		###---------------------------------------------------------------------------------------------------------------------###
+		
+		//----ADD COURSES
 		$allcourses_array = Db::getInstance ()->select_courses ();
 		if (! empty ( $_POST ['bloc_import'] )) {
 			if (! empty ( $_FILES ['bloc_file'] ['tmp_name'] )) {
@@ -32,12 +46,18 @@ class BlocController {
 				move_uploaded_file ( $origine, $destination );
 				if ($_SESSION ['person_in_charge'] == 'bloc1'){
 					$bloc1_courses_array = $this->getallcourses ( 'conf/programme_bloc1.csv' );
+					$allcourses_array = Db::getInstance ()->select_courses_bloc($bloc1);
+						
 				}
 				if ($_SESSION ['person_in_charge'] == 'bloc2'){
 					$bloc2_courses_array = $this->getallcourses ( 'conf/programme_bloc2.csv' );
+					$allcourses_array = Db::getInstance ()->select_courses_bloc($bloc2);
+						
 				}
 				if ($_SESSION ['person_in_charge'] == 'bloc3'){
 					$bloc3_courses_array = $this->getallcourses ( 'conf/programme_bloc3.csv' );
+					$allcourses_array = Db::getInstance ()->select_courses_bloc($bloc3);
+						
 				}
 				if ($_SESSION ['person_in_charge'] == 'blocs'){
 					if (! empty ( $_POST ['bloc_selected'] )){
@@ -46,46 +66,50 @@ class BlocController {
 						if ($bloc_selected == 'Bloc1'){
 							$bloc1_courses_array = $this->getallcourses ( 'conf/programme_bloc1.csv', $bloc_selected );
 							$allcourses_array = Db::getInstance ()->select_courses ();
-								
-							//var_dump($bloc1_courses_array);
 						}
 						elseif ($bloc_selected == 'Bloc2'){
 							$bloc2_courses_array = $this->getallcourses ( 'conf/programme_bloc2.csv', $bloc_selected );
 							$allcourses_array = Db::getInstance ()->select_courses ();
-								
-							//var_dump($bloc2_courses_array);		
 						}
 						elseif ($bloc_selected == 'Bloc3'){
 							$bloc3_courses_array = $this->getallcourses ( 'conf/programme_bloc3.csv', $bloc_selected );	
 							$allcourses_array = Db::getInstance ()->select_courses ();
-								
-							//var_dump($bloc3_courses_array);		
 						}
 					}
-
 				}
 			}
 		}
-		//$allcourses_array = Db::getInstance ()->select_courses ($bloc_selected);
-		//var_dump($allcourses_array);
-		$allcourses_array = Db::getInstance ()->select_courses ();	
-		//var_dump($allcourses_array);
 		
-		//DELETE COURSES
-		if (! empty ( $_POST ['bloc_delete'] )) {
-			if (! empty ( $_POST ['bloc_selected'] )){
-				$bloc_selected = $_POST ['bloc_selected'];
-				Db::getInstance()->delete_course($bloc_selected);
-			}
-					
+		//----FILTER COURSES PER BLOC
+		if (!empty($_POST['courses_bloc1_selected'])){
+			$allcourses_array = Db::getInstance ()->select_courses_bloc($bloc1);
+		
 		}
-		$allcourses_array = Db::getInstance ()->select_courses ();
+		if (!empty($_POST['courses_bloc2_selected'])){
+			$allcourses_array = Db::getInstance ()->select_courses_bloc($bloc2);
+				
+		}
+		if (!empty($_POST['courses_bloc3_selected'])){
+			$allcourses_array = Db::getInstance ()->select_courses_bloc($bloc3);
+				
+		}
+		
+
+		//----DELETE ALL COURSES
+		if (! empty ( $_POST ['bloc_delete'] )) {
+			Db::getInstance()->delete_course();
+			$allcourses_array = Db::getInstance ()->select_courses ();		
+		}
+		
+		###---------------------------------------------------------------------------------------------------------------------###
+		###-----------------------------------------------------------STUDENTS--------------------------------------------------###
+		###---------------------------------------------------------------------------------------------------------------------###
 		
 		
-		// ----------------ETUDIANT-------------------
-		
+		//----DEFAULT : ALL STUDENTS SHOWN
 		$allstudents_array = Db::getInstance ()->select_students ();
-		// ADD STUDENTS
+		
+		//----ADD STUDENTS
 		if (! empty ( $_POST ['students_import'] )) {
 			if (! empty ( $_FILES ['students_file'] ['tmp_name'] )) {
 					
@@ -97,23 +121,33 @@ class BlocController {
 			}
 		}
 		
-		//DELETE STUDENTS
+		//----FILTER STUDENT
+		if (!empty($_POST['students_bloc1_selected'])){
+			var_dump($_POST['students_bloc1_selected']);
+			var_dump($bloc1);
+			$allstudents_array = Db::getInstance ()->select_students_bloc($bloc1);
+				
+		}
+		if (!empty($_POST['students_bloc2_selected'])){
+			$allstudents_array = Db::getInstance ()->select_students_bloc($bloc2);
+				
+		}	
+		if (!empty($_POST['students_bloc3_selected'])){
+			$allstudents_array = Db::getInstance ()->select_students_bloc($bloc3);
+				
+		}
+		
+		//----DELETE STUDENTS
 		if (!empty ($_POST ['students_delete'])){
 			Db::getInstance()->delete_students();
+			$allstudents_array = Db::getInstance ()->select_students ();
 		}
-		$allstudents_array = Db::getInstance ()->select_students ();
 		
+		###---------------------------------------------------------------------------------------------------------------------###
+		###------------------------------------------------------------SERIES---------------------------------------------------###
+		###---------------------------------------------------------------------------------------------------------------------###
 		
-		
-		//----------------------SERIES-----------------------
-		
-		//COMMENT CREER SERIE SELON BLOC ?
-		
-		//$bloc_students_array = Db::getInstance()->select_students_bloc($bloc_selected);
-		//$bloc_series_array = Db::getInstance()->select_series($bloc_selected);
-		
-		
-		//CREATE SERIE REGARDING BLOC
+		//----CREATE SERIE REGARDING BLOC
 		if (!empty ($_POST['create_series'])){
 			if (!empty ($_POST['number_of_series'])){ 
 				$number_of_series = $_POST['number_of_series'];
@@ -131,69 +165,97 @@ class BlocController {
 						elseif ($bloc_selected=='Bloc3') {
 							$code_serie = '3I' . $i;
 						}
-						Db::getInstance()->insert_series($code_serie, $bloc_selected);
-						$bloc_series_array = Db::getInstance()->select_series($bloc_selected);
+						$exist = Db::getInstance()->serie_exists($code_serie);
+						if (!$exist)
+							Db::getInstance()->insert_series($code_serie, $bloc_selected);
 					}
 				}
 			}
 		}
-		$bloc_students_array = Db::getInstance()->select_students_bloc($bloc_selected);
-		$bloc_series_array = Db::getInstance()->select_series($bloc_selected);
-
-
-		//UPDATE SERIE REGARDING BLOC
-		if (!empty ($_POST['series_update'])){
-			var_dump($_POST);
+		
+		// 
+		
+		//----FILTER STUDENTS PER BLOC FOR SELECTING SERIES
+		if (!empty($_POST['serie_bloc1_selected'])){
+			$bloc_students_array = Db::getInstance()->select_students_serie($bloc1);
+			$bloc_series_array = Db::getInstance()->select_series($bloc1);
+			$bloc_selected = $bloc1;
+			
+		}
+		if (!empty($_POST['serie_bloc2_selected'])){
+			$bloc_students_array = Db::getInstance()->select_students_serie($bloc2);
+			$bloc_series_array = Db::getInstance()->select_series($bloc2);
+			$bloc_selected = $bloc2;
+				
+		}
+		if (!empty($_POST['serie_bloc3_selected'])){
+			$bloc_students_array = Db::getInstance()->select_students_serie($bloc3);
+			$bloc_series_array = Db::getInstance()->select_series($bloc3);	
+			$bloc_selected = $bloc3;
 				
 		}
 		
 		
-		//DELETE SERIE REGARDING BLOC
+		//----UPDATE SERIE REGARDING BLOC
+		if (!empty ($_POST['series_update'])){
+			if (!empty ($_POST['student'])){
+				$student_to_update = $_POST['student'];
+				foreach ($student_to_update as $email => $serie){
+					Db::getInstance()->update_student_serie($email, $serie);
+				}
+				
+			}
+		}
+
+
+		//----DELETE SERIE REGARDING BLOC
 		if (!empty ($_POST['delete_series'])){
 			if (!empty ($_POST['bloc_selected'])) {
 				$bloc_selected = $_POST ['bloc_selected'];
 				Db::getInstance()->delete_series_bloc($bloc_selected);
-			}
-					
+			}		
 		}
+		$bloc_students_array = Db::getInstance()->select_students_serie($bloc_selected);
+		$bloc_series_array = Db::getInstance()->select_series($bloc_selected);
 		
-		
-		
-		
-// 		//suppression séries table séries
-// 		if (!empty($_POST['series_delete'])) {
-// 			if (!empty($_POST['series'])) {
-// 				foreach ($_POST['series'] as $i => $code_serie) {
-// 					Db::getInstance()->delete_series($code_serie);
-// 					$series_array = Db::getInstance()->select_series();
-						
-// 				}
-// 				$notification = 'Le(s) séries ont été effacées';
-// 			} else {
-// 				$notification = 'Aucune série à effacer';
-// 			}
-// 		}
 
+		###---------------------------------------------------------------------------------------------------------------------###
+		###------------------------------------------------------------SEANCES--------------------------------------------------###
+		###---------------------------------------------------------------------------------------------------------------------###
 		
 		
 		
-		//----------------------SEANCES TYPES
 		
 		
 		
+		###---------------------------------------------------------------------------------------------------------------------###
+		###------------------------------------------------------------VIEWS  --------------------------------------------------###
+		###---------------------------------------------------------------------------------------------------------------------###
 		
+		//TEACHER VIEW
+		//require_once (PATH_VIEWS . 'teacher.php');
 		
-		
-		//-------------------------VIEWS
-		require_once (PATH_VIEWS . 'teacher.php');
+		//IF BLOCS MANAGER
 		if ($_SESSION ['person_in_charge'] == 'blocs'){
-			require_once (PATH_VIEWS . 'blocs.manager.menu.php');
-				
-			require_once (PATH_VIEWS . 'bloc.program.table.php');
-				
-			require_once (PATH_VIEWS . 'bloc.students.table.php');
+// 			//ADD STUDENTS
+// 			require_once (PATH_VIEWS . 'blocs.add.student.php');
+// 			if (count($allstudents_array)!=0){
+// 				require_once (PATH_VIEWS . 'bloc.students.table.php');
+// 			}
+// 			//ADD PROGRAMS
+// 			require_once (PATH_VIEWS . 'blocs.add.program.php');
+// 			if (count($allcourses_array)!=0){
+// 				require_once (PATH_VIEWS . 'bloc.program.table.php');
+// 			}
+			//CREATE SERIES
+			require_once (PATH_VIEWS . 'blocs.create.series.php');
 			
-			require_once (PATH_VIEWS . 'bloc.series.table.php');
+			if (!empty($_POST['serie_bloc1_selected'])|| !empty($_POST['serie_bloc2_selected'])	|| !empty($_POST['serie_bloc3_selected'])){
+					require_once (PATH_VIEWS . 'bloc.series.table.php');
+			}
+				
+			
+				
 				
 			
 		}
@@ -215,7 +277,6 @@ class BlocController {
 				$abbreviation_trimmed = trim ( $result [6] );
 				
 				$course = Db::getInstance ()-> course_exists($code_trimmed);
-				//var_dump($course);
 				if (!$course) {
 					Db::getInstance ()->insert_courses (  $code_trimmed, $name_trimmed, $term_trimmed, $course_unit_trimmed, $credit_trimmed, $abbreviation_trimmed, $bloc );
 				}
@@ -239,7 +300,6 @@ class BlocController {
 				$email_trimmed = trim ( $result [4] );
 				
 				$student = Db::getInstance ()->student_exists( $email_trimmed );
-				//var_dump($student);
 				if (!$student) {
 					Db::getInstance ()->insert_students ( $email_trimmed, $name_trimmed, $first_name_trimmed, $bloc_trimmed );
 				}	
