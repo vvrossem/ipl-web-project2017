@@ -18,7 +18,11 @@
 			}
 			return self::$instance;
 		}
-		// ----WEEKS----
+		
+		###------------------------------------------------------------------###
+		###-----------------------------WEEKS--------------------------------###
+		###------------------------------------------------------------------###
+		
 		public function select_weeks() {
 			$query = 'SELECT * FROM weeks';
 			$result = $this->_db->query ( $query );
@@ -37,7 +41,10 @@
 			$result = $this->_db->prepare ( $query )->execute ();
 		}
 		
-		// ----TEACHERS----
+		###------------------------------------------------------------------###
+		###-----------------------------TEACHERS-----------------------------###
+		###------------------------------------------------------------------###		
+		
 		public function select_teachers() {
 			$query = 'SELECT * FROM teachers';
 			$result = $this->_db->query ( $query );
@@ -106,14 +113,11 @@
 			return null;
 		}
 		
+		###------------------------------------------------------------------###
+		###-----------------------------STUDENTS-----------------------------###
+		###------------------------------------------------------------------###
 		
-		
-		
-		
-			
-		// ----STUDENTS----
-		
-		//verify if student is present in table
+		//verify if student email is present in table
 		public function student_exists($email) {
 			$query = 'SELECT * from students WHERE email='.$this->_db->quote($email);
 			$result = $this->_db->query($query);
@@ -137,8 +141,11 @@
 		}
 		
 		// select ALL students 
-		public function select_students() {
-			$query = 'SELECT * FROM students';
+		public function select_students($bloc='') {
+			if($bloc!='')
+				$query = 'SELECT * FROM students WHERE bloc=' . $this->_db->quote ( $bloc );
+			else	
+				$query = 'SELECT * FROM students';
 			$result = $this->_db->query ( $query );
 			$table = array ();
 			if ($result->rowcount () != 0) {
@@ -149,31 +156,6 @@
 			return $table;
 		}
 		
-		// select student regarding BLOC
-		public function select_students_bloc($bloc){
-			$query = 'SELECT * FROM students WHERE bloc=' . $this->_db->quote ( $bloc );
-			$result = $this->_db->query ( $query );
-			$table = array ();
-			if ($result->rowcount () != 0) {
-				while ( $row = $result->fetch () ) {
-					$table [] = new Students ( $row->email, $row->name, $row->first_name, $row->bloc, $row->code_serie );
-				}
-			}
-			return $table;
-		}
-		
-		// select student regarding BLOC
-		public function select_students_serie($bloc){
-			$query = 'SELECT * FROM students WHERE  bloc=' . $this->_db->quote ( $bloc );
-			$result = $this->_db->query ( $query );
-			$table = array ();
-			if ($result->rowcount () != 0) {
-				while ( $row = $result->fetch () ) {
-					$table [] = new Students ( $row->email, $row->name, $row->first_name, $row->bloc, $row->code_serie );
-				}
-			}
-			return $table;
-		}
 		
 		// insert students into the database
 		public function insert_students($email, $name, $first_name, $bloc) {
@@ -203,11 +185,27 @@
 			$qp->execute ();
 		}
 				
+		###------------------------------------------------------------------###
+		###-----------------------------COURSES------------------------------###
+		###------------------------------------------------------------------###
+
+		//verify if course is present in table
+		public function course_exists($code) {
+			$query = 'SELECT * from courses WHERE code='.$this->_db->quote($code);
+			$result = $this->_db->query($query);
+			$exists = false;
+			if ($result->rowcount()!=0) {
+				$exists = true;
+			}
+			return $exists;
+		}
 		
-		// ------------------COURSES-------------------
-		// select ALL courses or courses regarding BLOC
-		public function select_courses() {
-			$query = 'SELECT * FROM courses';
+		// select ALL courses
+		public function select_courses($bloc='') {
+			if($bloc != '')
+				$query = 'SELECT * FROM courses WHERE bloc =' . $this->_db->quote($bloc);
+			else 
+				$query = 'SELECT * FROM courses';
 			$result = $this->_db->query ( $query );
 			$table = array ();
 			if ($result->rowcount () != 0) {
@@ -218,19 +216,6 @@
 			return $table;
 		}
 		
-		
-		public function select_courses_bloc($bloc) {
-			$query = 'SELECT * FROM courses WHERE bloc =' . $this->_db->quote($bloc);
-			$result = $this->_db->query ( $query );
-			$table = array ();
-			if ($result->rowcount () != 0) {
-				while ( $row = $result->fetch () ) {
-					$table [] = new Courses ( $row->code, $row->name, $row->term, $row->course_unit, $row->credit, $row->abbreviation, $row->bloc );
-				}
-			}
-			return $table;
-			var_dump($table);
-		}
 		
 		//select course regarding code
 		public function select_course($code) {
@@ -243,18 +228,8 @@
 			}
 			return $course;
 		}
-		
-		//verify if course is present in table
-		public function course_exists($code) {
-			$query = 'SELECT * from courses WHERE code='.$this->_db->quote($code);
-			$result = $this->_db->query($query);
-			$exists = false;
-			if ($result->rowcount()!=0) {
-				$exists = true;
-			}
-			return $exists;
-		}
-		
+
+		// insert course
 		public function insert_courses($code, $name, $term, $course_unit, $credit, $abbreviation, $bloc) {
 			$query = 'INSERT INTO courses(code, name, term, course_unit, credit, abbreviation, bloc) 
 				  VALUES (:code, :name, :term, :course_unit, :credit, :abbreviation, :bloc)';
@@ -269,22 +244,18 @@
 			$qp->execute ();
 		}
 		
+		// delete course
 		public function delete_course(){
 			$query = 'DELETE FROM courses';
 			$qp = $this->_db->prepare ( $query );
 			$qp->execute ();
 		}
 		
-		//---------------SERIES
+		###------------------------------------------------------------------###
+		###-----------------------------SERIES-------------------------------###
+		###------------------------------------------------------------------###
 		
-		public function insert_series($code_serie, $bloc){
-			$query = 'INSERT INTO series(code_serie, bloc) VALUES (:code_serie, :bloc)';
-			$qp = $this->_db->prepare ( $query );
-			$qp->bindValue ( ':code_serie', $code_serie );
-			$qp->bindValue ( ':bloc', $bloc );
-			$qp->execute ();
-		}
-		
+		// verify if serie code is in the table
 		public function serie_exists($code_serie) {
 			$query = 'SELECT * from series WHERE code_serie='.$this->_db->quote($code_serie);
 			$result = $this->_db->query($query);
@@ -294,13 +265,12 @@
 			}
 			return $exists;
 		}
-
 		
-		//select course regarding code
+		//select ALL series OR regarding bloc
 		public function select_series($bloc='') {
 			if ($bloc!='')
 				$query = 'SELECT * FROM series WHERE bloc =' . $this->_db->quote($bloc);
-			else 
+			else
 				$query = 'SELECT * FROM series';
 			$result = $this->_db->query ( $query );
 			$table = array ();
@@ -312,7 +282,17 @@
 			return $table;
 		}
 		
-		//??? utile ???
+		// insert serie
+		public function insert_series($code_serie, $bloc){
+			$query = 'INSERT INTO series(code_serie, bloc) VALUES (:code_serie, :bloc)';
+			$qp = $this->_db->prepare ( $query );
+			$qp->bindValue ( ':code_serie', $code_serie );
+			$qp->bindValue ( ':bloc', $bloc );
+			$qp->execute ();
+		}
+		
+
+		// delete serie regarding code_serie
 		public function delete_series($code_serie) {
 			$query = 'DELETE FROM series WHERE code_serie = :code_serie';
 			$qp = $this->_db->prepare ( $query );
@@ -320,6 +300,7 @@
 			$qp->execute ();		
 		}
 		
+		// delete serie regarding BLOC
 		public function delete_series_bloc($bloc) {
 			$query = 'DELETE FROM series WHERE bloc = :bloc';
 			$qp = $this->_db->prepare ( $query );
@@ -327,10 +308,49 @@
 			$qp->execute ();
 		}
 		
+		###------------------------------------------------------------------###
+		###-----------------------------TYPE_SESSIONS------------------------###
+		###------------------------------------------------------------------###
 		
+		//select session type
+// 		public function select_type_session($bloc=''){
+// 			if ($bloc!='')
+// 				$query = 'SELECT ts.id_type_session, ts.code, ts.name_type_sessions, ts.attendance_taking_type
+// 				FROM type_sessions ts, courses co
+// 				WHERE ts.code = co.code
+// 				AND co.bloc ='. $this->_db->quote($bloc);
+// 			else 
+// 				$query = 'SELECT * FROM type_sessions';
+// 			$result = $this->_db->query ( $query );
+// 			$table = array ();
+// 			if ($result->rowcount () != 0) {
+// 				while ( $row = $result->fetch () ) {
+// 					$table [] = new Type_Sessions ( $row->id_type_session, $row->code, $row->name_type_sessions, $row->attendance_taking_type);
+// 				}
+// 			}
+// 			return $table;
+			
+// 		}
+		public function select_type_session($bloc = '') {
+			
+			$query = 'SELECT DISTINCT ts.id_type_session, ts.code, ts.name_type_sessions, ts.attendance_taking_type, co.name
+					FROM type_sessions_serie tss, type_sessions ts, courses co
+					WHERE ts.code = co.code
+					AND tss.id_type_session = ts.id_type_session
+					AND co.bloc =' . $this->_db->quote ( $bloc );
+			
+			$result = $this->_db->query ( $query );
+			$table = array ();
+			if ($result->rowcount () != 0) {
+				while ( $row = $result->fetch () ) {
+					
+					$table [] = new Type_Sessions ( $row->id_type_session, $row->code, $row->name_type_sessions, $row->attendance_taking_type );
+				}
+			}
+			return $table;
+		}
 		
-		//----------------SEANCES TYPES
-		
+		// insert session type
 		public function insert_type_sessions($code, $name_type_sessions, $attendance_taking_type){
 			$query = 'INSERT INTO type_sessions(code, name_type_sessions, attendance_taking_type) 
 					VALUES (:code, :name_type_sessions, :attendance_taking_type )';
@@ -339,8 +359,57 @@
 			$qp->bindValue ( ':name_type_sessions', $name_type_sessions );
 			$qp->bindValue ( ':attendance_taking_type', $attendance_taking_type );
 			$qp->execute ();
+			$lastId = $this->_db->lastInsertId();
+			return $lastId;
+
+		}
+			
+			// ##------------------------------------------------------------------###
+			// ##-----------------------TYPE_SESSIONS_SERIE------------------------###
+			// ##------------------------------------------------------------------###
+			
+		public function select_type_session_serie($bloc) {
+			$query = 'SELECT tss.id_type_session_serie, co.code, co.name, ts.name_type_sessions, ts.attendance_taking_type, tss.code_serie
+							FROM type_sessions_serie tss, type_sessions ts, courses co
+							WHERE tss.id_type_session = ts.id_type_session
+							AND ts.code = co.code
+							AND co.bloc =' . $this->_db->quote ( $bloc );
+			
+			$result = $this->_db->query ( $query );
+			$table = array();
+			if ($result->rowcount () != 0) {
+				while ( $row = $result->fetch () ) {
+					$table [] = array (
+							$row->id_type_session_serie,
+							$row->code,
+							$row->name,
+							$row->name_type_sessions,
+							$row->attendance_taking_type,
+							$row->code_serie,	
+					);
+				}
+			}
+			return $table;
+		}
+
+		
+		
+		// insert session type
+		public function insert_type_sessions_serie($code_serie, $id_type_session){
+			$query = 'INSERT INTO type_sessions_serie(code_serie, id_type_session)
+					VALUES (:code_serie, :id_type_session )';
+			$qp = $this->_db->prepare ( $query );
+			$qp->bindValue ( ':code_serie', $code_serie );
+			$qp->bindValue ( ':id_type_session', $id_type_session );
+			$qp->execute ();
+
 		}
 		
+		###------------------------------------------------------------------###
+		###-----------------------LAST INSERT ID-----------------------------###
+		###------------------------------------------------------------------###
+		
+
 		
 	}
-	?>	
+?>	
