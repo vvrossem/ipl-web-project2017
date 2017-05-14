@@ -1,109 +1,111 @@
 ﻿ <?php
-class Db{
-    private static $instance = null;
-    private $_db;
-
-    private function __construct() {
-        try {
-            $this->_db = new PDO('mysql:host=localhost;dbname=projet;charset=utf8', 'root', '');
-            $this->_db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-			$this->_db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_OBJ);
-        } 
-		catch (PDOException $e) {
-		    die('Erreur de connexion à la base de données : '.$e->getMessage());
-        }
-    }
 
 
-    public static function getInstance(){
-        if (is_null(self::$instance)) {
-            self::$instance = new Db();
-        }
-        return self::$instance;
-    }
-	###------------------------------------------------------------------###
-	###-----------------------------WEEKS--------------------------------###
-	###------------------------------------------------------------------###
-	public function select_weeks(){
-        $query   = 'SELECT * FROM weeks';
-        $result  = $this->_db->query($query);
-        $table = array();
-        if ($result->rowcount() != 0) {
-            while ($row = $result->fetch()) {
-                $table[] = new Weeks($row->week_number, $row->term, $row->week_name, $row->date_monday);
-            }
-        } else {
-            return 0;
-        }
-        return $table;
-	}
-	
-	public function insert_weeks($week){
-		$query = 'INSERT INTO weeks (week_number, term, week_name, date_monday) values (' . $this->_db->quote($week->week_number()) . ', ' . $this->_db->quote($week->term()) . ', ' . $this->_db->quote($week->week_name()) . ',' . $this->_db->quote($week->date_monday()) . ')';
-		$result=$this->_db->prepare($query)->execute();
-	}
-	
-	
-	###------------------------------------------------------------------###
-	###-----------------------------TEACHERS-----------------------------###
-	###------------------------------------------------------------------###	
-	public function select_teachers(){
-        $query   = 'SELECT * FROM teachers';
-        $result  = $this->_db->query($query);
-        $table = array();
-        if ($result->rowcount() != 0) {
-            while ($row = $result->fetch()) {
-                $table[] = new Teachers($row->email, $row->name, $row->first_name, $row->person_in_charge);
-            }
-        } else {
-            return 0;
-        }
-        return $table;
-	}
-	#introduction teachers into the db
-	public function introduction_teachers($csvTeachers){
-		$ok=1;
-		$teachers = array ();
-	if (file_exists ( $csvTeachers)) {
-		$fcontents = file ( $csvTeachers );
-		unset($fcontents[0]);
-		foreach ( $fcontents as $i => $icontent ) {
-				preg_match ( '/^(.*);(.*);(.*);(.*)/', $icontent, $result );
-			 if($result == null) {
-			 }
-             else{
-				$query   = 'SELECT * FROM teachers WHERE email='.$this->_db->quote(htmlspecialchars($result[1]));
-				$result2  = $this->_db->query($query);
-				if ($result2->rowcount() == 0  ) {
-					$teachers [$i] = new Teachers ( htmlspecialchars($result[1]), htmlspecialchars($result[2]), htmlspecialchars($result[3]), htmlspecialchars($result[4]) );
-					$query = "INSERT INTO teachers(email,name,first_name,person_in_charge) VALUES(" . $this->_db->quote(htmlspecialchars($result[1])) . ", " . $this->_db->quote(htmlspecialchars($result[2])) . "," . $this->_db->quote(htmlspecialchars($result[3])) . "," . $this->_db->quote(htmlspecialchars($result[4]))  . ")";
-					$this->_db->prepare($query)->execute();
-				 }
-            }
-			 
+	class Db {
+		private static $instance = null;
+		private $_db;
+		
+		private function __construct() {
+			try {
+				$this->_db = new PDO ( 'mysql:host=localhost;dbname=projet;charset=utf8', 'root', '' );
+				$this->_db->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+				$this->_db->setAttribute ( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ );
+			} catch ( PDOException $e ) {
+				die ( 'Erreur de connexion à la base de données : ' . $e->getMessage () );
+			}
 		}
-	}
-	return $teachers;
-	}
+		public static function getInstance() {
+			if (is_null ( self::$instance )) {
+				self::$instance = new Db ();
+			}
+			return self::$instance;
+		}
+		
+		###------------------------------------------------------------------###
+		###-----------------------------WEEKS--------------------------------###
+		###------------------------------------------------------------------###
+		
+		public function select_weeks() {
+			$query = 'SELECT * FROM weeks';
+			$result = $this->_db->query ( $query );
+			$table = array ();
+			if ($result->rowcount () != 0) {
+				while ( $row = $result->fetch () ) {
+					$table [] = new Weeks ( $row->week_number, $row->term, $row->week_name, $row->date_monday );
+				}
+			} else {
+				return 0;
+			}
+			return $table;
+		}
+
+		public function insert_weeks($week) {
+			$query = 'INSERT INTO weeks (week_number, term, week_name, date_monday) values (' . $this->_db->quote ( $week->week_number () ) . ', ' . $this->_db->quote ( $week->term () ) . ', ' . $this->_db->quote ( $week->week_name () ) . ',' . $this->_db->quote ( $week->date_monday () ) . ')';
+			$result = $this->_db->prepare ( $query )->execute ();
+		}
+		
+		###------------------------------------------------------------------###
+		###-----------------------------TEACHERS-----------------------------###
+		###------------------------------------------------------------------###		
+		
+		public function select_teachers() {
+			$query = 'SELECT * FROM teachers';
+			$result = $this->_db->query ( $query );
+			$table = array ();
+			if ($result->rowcount () != 0) {
+				while ( $row = $result->fetch () ) {
+					$table [] = new Teachers ( $row->email, $row->name, $row->first_name, $row->person_in_charge );
+				}
+			} else {
+				return 0;
+			}
+			return $table;
+		}
+		
+		
+		public function introduction_teachers($csvTeachers){
+			$ok=1;
+			$teachers = array ();
+			if (file_exists ( $csvTeachers)) {
+				$fcontents = file ( $csvTeachers );
+				unset($fcontents[0]);
+				foreach ( $fcontents as $i => $icontent ) {
+						preg_match ( '/^(.*);(.*);(.*);(.*)/', $icontent, $result );
+					 if($result == null) {
+					 } else{
+						$query   = 'SELECT * FROM teachers WHERE email='.$this->_db->quote(htmlspecialchars($result[1]));
+						$result2  = $this->_db->query($query);
+						if ($result2->rowcount() == 0  ) {
+							$teachers [$i] = new Teachers ( htmlspecialchars($result[1]), htmlspecialchars($result[2]), htmlspecialchars($result[3]), htmlspecialchars($result[4]) );
+							$query = "INSERT INTO teachers(email,name,first_name,person_in_charge) VALUES(" . $this->_db->quote(htmlspecialchars($result[1])) . ", " . $this->_db->quote(htmlspecialchars($result[2])) . "," . $this->_db->quote(htmlspecialchars($result[3])) . "," . $this->_db->quote(htmlspecialchars($result[4]))  . ")";
+							$this->_db->prepare($query)->execute();
+						 }
+					}
+					 
+				}
+			}
+			return $teachers;
+		}
 	
 		#insert the new teachers of another professeurs.csv file
 		public function insert_new_teachers($csvTeachers){
-				$teachers = array ();
-		if (file_exists ( $csvTeachers)) {
-			$fcontents = file ( $csvTeachers );
-			unset($fcontents[0]);
-			foreach ( $fcontents as $i => $icontent ) {
-				if(preg_match ( '/^(.*);(.*);(.*);(.*)/', $icontent, $result )==1){
-					$query   = 'SELECT * FROM teachers WHERE email='.$this->_db->quote(htmlspecialchars($result[1]));
-					$result2  = $this->_db->query($query);
-				if ($result2->rowcount() == 0  ) {
-					$query = "INSERT INTO teachers(email,name,first_name,person_in_charge) VALUES(" . $this->_db->quote(htmlspecialchars($result[1])) . ", " . $this->_db->quote(htmlspecialchars($result[2])) . "," . $this->_db->quote(htmlspecialchars($result[3])) . "," . $this->_db->quote(htmlspecialchars($result[4]))  . ")";
-					$this->_db->prepare($query)->execute();
-				}
+			$teachers = array ();
+			if (file_exists ( $csvTeachers)) {
+				$fcontents = file ( $csvTeachers );
+				unset($fcontents[0]);
+				foreach ( $fcontents as $i => $icontent ) {
+					if(preg_match ( '/^(.*);(.*);(.*);(.*)/', $icontent, $result )==1){
+						$query   = 'SELECT * FROM teachers WHERE email='.$this->_db->quote(htmlspecialchars($result[1]));
+						$result2  = $this->_db->query($query);
+						if ($result2->rowcount() == 0  ) {
+							$query = "INSERT INTO teachers(email,name,first_name,person_in_charge) VALUES(" . $this->_db->quote(htmlspecialchars($result[1])) . ", " . $this->_db->quote(htmlspecialchars($result[2])) . "," . $this->_db->quote(htmlspecialchars($result[3])) . "," . $this->_db->quote(htmlspecialchars($result[4]))  . ")";
+							$this->_db->prepare($query)->execute();
+						}
+					}
 				}
 			}
 		}
-		}
+		
 		#connexion of the teachers
 		public function select_teacher_email($email){
 			$query = 'SELECT * FROM teachers WHERE email=' . $this->_db->quote($email) ;
@@ -114,8 +116,7 @@ class Db{
 			}
 			return null;
 		}
-	
-			
+
 		###------------------------------------------------------------------###
 		###-----------------------------STUDENTS-----------------------------###
 		###------------------------------------------------------------------###
@@ -144,8 +145,11 @@ class Db{
 		}
 		
 		// select ALL students 
-		public function select_students() {
-			$query = 'SELECT * FROM students';
+		public function select_students($bloc='') {
+			if($bloc!='')
+				$query = 'SELECT * FROM students WHERE bloc=' . $this->_db->quote ( $bloc );
+			else	
+				$query = 'SELECT * FROM students';
 			$result = $this->_db->query ( $query );
 			$table = array ();
 			if ($result->rowcount () != 0) {
@@ -223,21 +227,28 @@ class Db{
 					$table [] = new Courses ( $row->code, $row->name, $row->term, $row->course_unit, $row->credit, $row->abbreviation, $row->bloc );
 					}
 			}
-			return $table;
+			return $exists;
 		}
 		
-		// select courses regarding BLOC
-		public function select_courses_bloc($bloc) {
-			$query = 'SELECT * FROM courses WHERE bloc =' . $this->_db->quote($bloc);
+
+		// select ALL courses
+		public function select_courses($bloc='') {
+			if($bloc != '')
+				$query = 'SELECT * FROM courses WHERE bloc =' . $this->_db->quote($bloc);
+			else 
+				$query = 'SELECT * FROM courses';
+			
 			$result = $this->_db->query ( $query );
 			$table = array ();
 			if ($result->rowcount () != 0) {
 				while ( $row = $result->fetch () ) {
 					$table [] = new Courses ( $row->code, $row->name, $row->term, $row->course_unit, $row->credit, $row->abbreviation, $row->bloc );
-				}
+					}
 			}
-			return $table;;
+
+			return $table;
 		}
+		
 		
 		//select course regarding code
 		public function select_course($code) {
@@ -331,8 +342,46 @@ class Db{
 		}
 		
 		###------------------------------------------------------------------###
-		###-----------------------------SESSIONS-----------------------------###
+		###-----------------------------TYPE_SESSIONS------------------------###
 		###------------------------------------------------------------------###
+		
+		//select session type
+// 		public function select_type_session($bloc=''){
+// 			if ($bloc!='')
+// 				$query = 'SELECT ts.id_type_session, ts.code, ts.name_type_sessions, ts.attendance_taking_type
+// 				FROM type_sessions ts, courses co
+// 				WHERE ts.code = co.code
+// 				AND co.bloc ='. $this->_db->quote($bloc);
+// 			else 
+// 				$query = 'SELECT * FROM type_sessions';
+// 			$result = $this->_db->query ( $query );
+// 			$table = array ();
+// 			if ($result->rowcount () != 0) {
+// 				while ( $row = $result->fetch () ) {
+// 					$table [] = new Type_Sessions ( $row->id_type_session, $row->code, $row->name_type_sessions, $row->attendance_taking_type);
+// 				}
+// 			}
+// 			return $table;
+			
+// 		}
+		public function select_type_session($bloc = '') {
+			
+			$query = 'SELECT DISTINCT ts.id_type_session, ts.code, ts.name_type_sessions, ts.attendance_taking_type, co.name
+					FROM type_sessions_serie tss, type_sessions ts, courses co
+					WHERE ts.code = co.code
+					AND tss.id_type_session = ts.id_type_session
+					AND co.bloc =' . $this->_db->quote ( $bloc );
+			
+			$result = $this->_db->query ( $query );
+			$table = array ();
+			if ($result->rowcount () != 0) {
+				while ( $row = $result->fetch () ) {
+					
+					$table [] = new Type_Sessions ( $row->id_type_session, $row->code, $row->name_type_sessions, $row->attendance_taking_type );
+				}
+			}
+			return $table;
+		}
 		
 		// insert session type
 		public function insert_type_sessions($code, $name_type_sessions, $attendance_taking_type){
@@ -343,7 +392,11 @@ class Db{
 			$qp->bindValue ( ':name_type_sessions', $name_type_sessions );
 			$qp->bindValue ( ':attendance_taking_type', $attendance_taking_type );
 			$qp->execute ();
+			$lastId = $this->_db->lastInsertId();
+			return $lastId;
+
 		}
+
 	
 	###------------------------------------------------------------------###
 	###--------------------------Attendance-Sheets-----------------------###
@@ -606,5 +659,54 @@ class Db{
 			$qp = $this->_db->prepare ( $query );
 			$qp->execute ();
 	}
-}
+
+			
+			// ##------------------------------------------------------------------###
+			// ##-----------------------TYPE_SESSIONS_SERIE------------------------###
+			// ##------------------------------------------------------------------###
+			
+		public function select_type_session_serie($bloc) {
+			$query = 'SELECT tss.id_type_session_serie, co.code, co.name, ts.name_type_sessions, ts.attendance_taking_type, tss.code_serie
+							FROM type_sessions_serie tss, type_sessions ts, courses co
+							WHERE tss.id_type_session = ts.id_type_session
+							AND ts.code = co.code
+							AND co.bloc =' . $this->_db->quote ( $bloc );
+			
+			$result = $this->_db->query ( $query );
+			$table = array();
+			if ($result->rowcount () != 0) {
+				while ( $row = $result->fetch () ) {
+					$table [] = array (
+							$row->id_type_session_serie,
+							$row->code,
+							$row->name,
+							$row->name_type_sessions,
+							$row->attendance_taking_type,
+							$row->code_serie,	
+					);
+				}
+			}
+			return $table;
+		}
+
+		
+		
+		// insert session type
+		public function insert_type_sessions_serie($code_serie, $id_type_session){
+			$query = 'INSERT INTO type_sessions_serie(code_serie, id_type_session)
+					VALUES (:code_serie, :id_type_session )';
+			$qp = $this->_db->prepare ( $query );
+			$qp->bindValue ( ':code_serie', $code_serie );
+			$qp->bindValue ( ':id_type_session', $id_type_session );
+			$qp->execute ();
+
+		}
+		
+		###------------------------------------------------------------------###
+		###-----------------------LAST INSERT ID-----------------------------###
+		###------------------------------------------------------------------###
+		
+
+		
+	}
 ?>	

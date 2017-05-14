@@ -11,7 +11,7 @@
 				<option>6</option>
 			</select>
 			<h3> Choisissez le bloc </h3> 
-			Bloc 1<input type = "radio" name = "bloc_selected" value ="Bloc1"/>
+			Bloc 1<input checked="checked" type = "radio" name = "bloc_selected" value ="Bloc1"/>
 			Bloc 2<input type = "radio" name = "bloc_selected" value ="Bloc2"/>
 			Bloc 3 <input type = "radio" name = "bloc_selected" value ="Bloc3"/>
 			<p>	<input type="submit" name="create_series" value="Créer"> </p>
