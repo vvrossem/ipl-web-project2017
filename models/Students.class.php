@@ -12,7 +12,6 @@ class Students{
 		$this->_bloc = $bloc;
 		$this->_code_serie = $code_serie;
 	}
-
 	public function email(){
 		return $this->_email;		
 	}

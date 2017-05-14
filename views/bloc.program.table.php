@@ -1,7 +1,6 @@
 <section>
 	<article>
 		<h2>Programme de cours</h2>
-
 		<table id="tableBloc">
 			<thead>
 				<tr>

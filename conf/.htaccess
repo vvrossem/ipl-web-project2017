@@ -1,0 +1,4 @@
+AuthName "Zone protégée"
+AuthType Basic
+AuthUserFile "C:\wamp\www\projetweb\conf\.htpasswd"
+Require valid-user

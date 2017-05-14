@@ -20,7 +20,7 @@ class Type_Sessions{
 		return $this->_name_type_session;
 	}
 	public function attendance_taking_type(){
-		return $this->attendance_taking_type;
+		return $this->_attendance_taking_type;
 	}
 }
 ?>

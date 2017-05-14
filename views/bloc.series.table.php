@@ -3,8 +3,9 @@
 		<h2>Séries</h2>
 
 		<form action="index.php?action=bloc" method="post">
-		<table id="tableStudents">
 		<input type="submit" name="series_update" value="Update">
+		
+		<table id="tableStudents">
 		
 			<thead>
 				<tr>

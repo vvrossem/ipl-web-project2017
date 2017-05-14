@@ -73,5 +73,10 @@
 	</article>	
 	<article>	
 		<p><a href="index.php?action=logout">Se déconnecter</a></p>
+		<p>Supprimer les données annuelles :
+			<form action = "index.php?action=admin" method = "post">
+			<input type = "submit" name = "delete_all" value = "Tout supprimer" />
+			</form>
+		</p>
 	</article>
 </section>
