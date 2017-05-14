@@ -216,20 +216,6 @@
 			}
 			return $exists;
 		}
-		
-		// select ALL courses
-		public function select_courses() {
-			$query = 'SELECT * FROM courses';
-			$result = $this->_db->query ( $query );
-			$table = array ();
-			if ($result->rowcount () != 0) {
-				while ( $row = $result->fetch () ) {
-					$table [] = new Courses ( $row->code, $row->name, $row->term, $row->course_unit, $row->credit, $row->abbreviation, $row->bloc );
-					}
-			}
-			return $exists;
-		}
-		
 
 		// select ALL courses
 		public function select_courses($bloc='') {
