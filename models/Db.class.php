@@ -7,7 +7,7 @@
 		
 		private function __construct() {
 			try {
-				$this->_db = new PDO ( 'mysql:host=localhost;dbname=projet;charset=utf8', 'root', '' );
+				$this->_db = new PDO ( 'mysql:host=localhost;dbname=projet1;charset=utf8', 'root', '' );
 				$this->_db->setAttribute ( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 				$this->_db->setAttribute ( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ );
 			} catch ( PDOException $e ) {
@@ -451,10 +451,10 @@
 			}
 			
 			foreach($students_array as $i=>$student){
-				if($this->select_attendance_taking_type($id_type_session)== 'notee'){
-				$query = "INSERT INTO attendances (attendance,medical_certificate,email,id_attendance_sheet,note) VALUES('',0," . $this->_db->quote(htmlspecialchars($student->email())) . ", " . $id_attendance_sheet  . ", 0 )";
+				if($this->select_attendance_taking_type($id_type_session)!= 'chiffre'){
+				$query = "INSERT INTO attendances (attendance,medical_certificate,email,id_attendance_sheet) VALUES('',0," . $this->_db->quote(htmlspecialchars($student->email())) . ", " . $id_attendance_sheet  . " )";
 				}else
-					$query = "INSERT INTO attendances (attendance,medical_certificate,email,id_attendance_sheet,note) VALUES('',0," . $this->_db->quote(htmlspecialchars($student->email())) . ", " . $id_attendance_sheet  .", -1 )";
+					$query = "INSERT INTO attendances (attendance,medical_certificate,email,id_attendance_sheet,note) VALUES('',0," . $this->_db->quote(htmlspecialchars($student->email())) . ", " . $id_attendance_sheet  .", 0 )";
 				$this->_db->prepare($query)->execute();
 			}
 			
@@ -498,25 +498,14 @@
 	}
 	
 	#add a student in attendance
-	public function select_student_name($name,$first_name){
-		$query = 'SELECT * From students WHERE name=' . $this->_db->quote($name) . ' AND first_name=' . $this->_db->quote($first_name) ;
-		$result = $this->_db->query($query);
-		if($result->rowcount()!=0){
-			$row=$result->fetch();
-			$student = new Students ($row->email,$row->name, $row->first_name, $row->bloc, $row->code_serie);
-			$email_student = $student->email();
-			return $email_student;
-		}else
-			return null;
-	}
 	public function insert_student_attendance($email,$id_attendance_sheet,$id_type_session){
 		$query = 'SELECT * From attendances WHERE email =' . $this->_db->quote(htmlspecialchars($email)) . ' AND id_attendance_sheet=' . $id_attendance_sheet ;
 		$result = $this->_db->query($query);
 		if($result->rowcount()==0){ // need to insert the student 
-			if($this->select_attendance_taking_type($id_type_session)== 'notee'){
+			if($this->select_attendance_taking_type($id_type_session)== 'chiffre'  ){
 				$query = "INSERT INTO attendances (attendance,medical_certificate,email,id_attendance_sheet,note) VALUES('',0," . $this->_db->quote(htmlspecialchars($email)) . ", " . $id_attendance_sheet  . ", 0 )";
 			}else
-				$query = "INSERT INTO attendances (attendance,medical_certificate,email,id_attendance_sheet,note) VALUES('',0," . $this->_db->quote(htmlspecialchars($email)) . ", " . $id_attendance_sheet  .", -1 )";
+				$query = "INSERT INTO attendances (attendance,medical_certificate,email,id_attendance_sheet) VALUES('',0," . $this->_db->quote(htmlspecialchars($email)) . ", " . $id_attendance_sheet  .")";
 		$this->_db->prepare($query)->execute();
 		return 1;	
 		}else{ // student already in the attendances table
@@ -645,6 +634,22 @@
 			$qp = $this->_db->prepare ( $query );
 			$qp->execute ();
 	}
+	
+	
+	// Delete weeks
+	public function select_attendances_sheets(){
+		$query = 'SELECT * FROM attendances_sheets';
+		$result = $this->_db->query($query);
+		if($result->rowcount()===0)
+			return 0;
+		return 1;
+	}	
+	public function delete_weeks(){
+			$query = 'DELETE FROM weeks';
+			$qp = $this->_db->prepare ( $query );
+			$qp->execute ();
+	}
+	
 
 			
 			// ##------------------------------------------------------------------###

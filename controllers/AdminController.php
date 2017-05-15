@@ -58,6 +58,12 @@ class AdminController{
 				}
 			}
 	}
+	//Delete weeks
+	if(!empty($_POST['delete_weeks'])){
+		Db::getInstance()->delete_weeks();
+		$_POST['form_weeks']='';
+	}
+	
 	//Delete all data
 	if(!empty($_POST['delete_all'])){
 		Db::getInstance()->delete_all();

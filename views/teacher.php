@@ -26,16 +26,16 @@
 		<p><h2> Légende des présences </h2> 
 		<div>Pour le champ Présence, il y a plusieurs possibilités: 1)si le champ est vide, l'élève est absent(e), si il contient X l'élève est présent(e) 2)si le champ contient X, l'élève est présent(e) activement, si il contient O, l'élève est présent(e) mais passivement. </div>
 		<div>Pour le champ Certificat Médical, le champ contient 0 si l'élève n'a pas remis de certificat médical, 1 si il/elle en as remis un.</div>
-		<div>Pour le champ Note, si le type de présence de la séance type est de type normale ('x'), le champ contient -1. Si elle est de type noté ('notee'), il contient la note de l'élève (entre 0 et 20). Pour change de type de présence, il suffit de remplacer tous les champs par -1 si on décide que la séance est de type normale ou par une note entre 0 et 20 si on veut qu'elle soit de type noté. </div>
+		<div>Pour le champ Note, si le type de présence de la séance type est de type normale ('X' ou 'XO'), le champ ne contient pas de note. Si elle est de type noté ('chiffre'), il contient la note de l'élève (entre 0 et 20). Pour change de type de présence, il suffit de remplacer tous les champs par ' ' si on décide que la séance est de type normale ou par une note entre 0 et 20 si on veut qu'elle soit de type noté. </div>
 		</p>
 		<form action = "index.php?action=teacher" method = "post">
 				<table >
 						<tr>
 							<th>Nom</th>
 							<th>Prénom</th>
-							<th>Présence (O:Absent, X:Présent)</th>
+							<th>Présence </th>
 							<th>Certificat médical(0:Pas justifiée, 1:Justifiéé)</th>	
-							<th>Note(-1:pas de note pour ce cours,0 à 20)</th>
+							<th>Note(pas de note pour ce cours ou note de 0 à 20)</th>
 						</tr>	
 						<?php foreach($students_attendances_array as $i => $student_attendance){ ?>
 								<tr>
@@ -69,12 +69,14 @@
 											<?php } ?>
 										</select> </td>
 									<td><select name="note[<?php echo $student_attendance->email()  ?>]" >
-											<?php if($student_attendance->note()!=-1){ ?>
-												<option>-1</option>
-											<?php } ?>
+											<?php if($student_attendance->note()!=NULL){ ?>
+												<option> </option>
 											<option  selected = "selected"><?php echo $student_attendance->note()?></option>
+											<?php }else{ ?>
+											<option selected = "selected"> </option>
+											<?php } ?>
 									<?php for($i=0;$i<21;$i++){ ?>
-										<?php if($student_attendance->note()==$i){ ?>
+										<?php if($student_attendance->note()===$i){ ?>
 
 										<?php }else{ ?>
 											<option><?php echo $i ?></option>
@@ -92,12 +94,16 @@
 			<input type = "submit" name = "new_attendances" value = "Autre feuille de présence" />
 		</form> </div>
 		
-		<form action = "index.php?action=teacher" method ="post">
-		<h2> Ajouter un étudiant </h2>
-		<?php echo $notification_student ?>
-		<p> Entrez le nom de l'étudiant<input type = "text" name = "name" required /> </p>
-		<p> Entrez son prénom	<input type="text" name="first_name" required /> </p>
-			<input type = "submit" name = "add_student" value = "Ajouter cet étudiant"  />
+			<form action="index.php?action=teacher" method="post">
+		<p> Choissisez un(e) étudiant(e) 
+		<select name = "add_email_student">
+		<?php foreach($students_array as $i=>$student){ ?>
+		<option value ="<?php echo $student->email()?>" ><?php echo $student->name() ?>  <?php echo $student->first_name() ?> </option> 
+		 <?php } ?>
+		</select>
+		</p>
+			<p>	<?php echo $notification_student ?></p>
+		<input type="submit" name="add_student" value="Ajouter"/>
 		</form>
 		<?php } ?>
 	</article>
@@ -134,7 +140,7 @@
 							<th> Séance-Type </th>
 							<th>Présence (O:Absent, X:Présent)</th>
 							<th>Certificat médical(0:Pas justifiée, 1:Justifiéé)</th>	
-							<th>Note(-1:pas de note pour ce cours,0 à 20)</th>
+							<th>Note(pas de note pour ce cours ou note entre 0 à 20)</th>
 					</tr>	
 					<?php foreach($attendances_series_array as $i => $student_attendance){ ?>
 					<?php $student = Db::getInstance()->select_student($student_attendance->email()); ?>
@@ -147,8 +153,11 @@
 						<td> <?php echo $type_session->code() ?> / <?php echo $type_session->name_type_session()?> </td>
 						<td> <?php echo $student_attendance->attendance()?></td>
 						<td> <?php echo $student_attendance->medical_certificate()?></td>
-						<td> <?php echo $student_attendance->note()?><td>
-						
+						<?php if($student_attendance->note()==Null){ ?>
+							<td> Pas de note pour ce cours </td>
+						<?php }else{ ?>
+							<td> <?php echo $student_attendance->note()?></td>
+						<?php } ?>
 					</tr>
 					<?php } ?>
 				</table>
@@ -183,7 +192,7 @@
 							<th> Seance-Type </th>
 							<th>Présence (O:Absent, X:Présent)</th>
 							<th>Certificat médical(0:Pas justifiée, 1:Justifiéé)</th>	
-							<th>Note(-1:pas de note pour ce cours,0 à 20)</th>
+							<th>Note(pas de note pour ce cours ou note entre 0 à 20)</th>
 					</tr>	
 					<?php foreach($attendances_dates_array as $i => $student_attendance){ ?>
 					<?php $student = Db::getInstance()->select_student($student_attendance->email()); ?>
@@ -194,7 +203,11 @@
 						<td> <?php echo $type_session->code() ?> / <?php echo $type_session->name_type_session()?> </td>
 						<td> <?php echo $student_attendance->attendance()?></td>
 						<td> <?php echo $student_attendance->medical_certificate()?></td>
-						<td> <?php echo $student_attendance->note()?><td>
+						<?php if($student_attendance->note()==Null){ ?>
+							<td> Pas de note pour ce cours </td>
+						<?php }else{ ?>
+							<td> <?php echo $student_attendance->note()?></td>
+						<?php } ?>
 						
 					</tr>
 					<?php } ?>
@@ -226,7 +239,7 @@
 							<th> Date de la semaine </th>
 							<th>Présence (O:Absent, X:Présent)</th>
 							<th>Certificat médical(0:Pas justifiée, 1:Justifiéé)</th>	
-							<th>Note(-1:pas de note pour ce cours,0 à 20)</th>
+							<th>Note(pas de note pour ce cours ou note entre 0 à 20)</th>
 					</tr>	
 					<?php foreach($attendances_type_sessions_array as $i => $student_attendance){ ?>
 					<?php $student = Db::getInstance()->select_student($student_attendance->email()); ?>
@@ -237,7 +250,11 @@
 						<td> <?php echo $week->date_monday() ?> </td>
 						<td> <?php echo $student_attendance->attendance()?></td>
 						<td> <?php echo $student_attendance->medical_certificate()?></td>
-						<td> <?php echo $student_attendance->note()?><td>
+						<?php if($student_attendance->note()==Null){ ?>
+							<td> Pas de note pour ce cours </td>
+						<?php }else{ ?>
+							<td> <?php echo $student_attendance->note()?></td>
+						<?php } ?>
 						
 					</tr>
 					<?php } ?>
@@ -265,9 +282,9 @@
 					<tr>
 							<th> Date de la semaine </th>
 							<th>Seance-type</th>
-							<th>Présence (O:Absent, X:Présent)</th>
+							<th>Présence ( :Absent, X:Présent(activement), O:Présent passivement)</th>
 							<th>Certificat médical(0:Pas justifiée, 1:Justifiéé)</th>	
-							<th>Note(-1:pas de note pour ce cours,0 à 20)</th>
+							<th>Note(pas de note pour ce cours ou note entre 0 à 20)</th>
 					</tr>	
 					<?php foreach($attendances_students_array as $i => $student_attendance){ ?>
 					<?php $week = Db::getInstance()->select_week_attendances($student_attendance->id_attendance_sheet()); ?>
@@ -278,7 +295,11 @@
 						<td> <?php echo $type_session->code() ?> / <?php echo $type_session->name_type_session()?> </td>
 						<td> <?php echo $student_attendance->attendance()?></td>
 						<td> <?php echo $student_attendance->medical_certificate()?></td>
-						<td> <?php echo $student_attendance->note()?><td>
+						<?php if($student_attendance->note()==Null){ ?>
+							<td> Pas de note pour ce cours </td>
+						<?php }else{ ?>
+							<td> <?php echo $student_attendance->note()?></td>
+						<?php } ?>
 						
 					</tr>
 					<?php } ?>

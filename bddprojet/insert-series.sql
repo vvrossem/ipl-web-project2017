@@ -1,0 +1,12 @@
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('1I1','Bloc1');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('1I2','Bloc1');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('1I3','Bloc1');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('1I4','Bloc1');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('1I5','Bloc1');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('1I6','Bloc1');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('2I1','Bloc2');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('2I2','Bloc2');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('2I3','Bloc2');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('3I1','Bloc3');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('3I2','Bloc3');
+INSERT INTO `series`(`code_serie`, `bloc`) VALUES ('3I3','Bloc3');

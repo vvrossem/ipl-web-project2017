@@ -59,7 +59,10 @@ class TeacherController{
 		}
 		$note_to_update = $_POST["note"];
 		foreach ($note_to_update as $email => $note){
-		Db::getInstance()->update_note($note,$email,$_SESSION['id_attendance_sheet']);		
+			if($note=='')
+				Db::getInstance()->update_note(NULL,$email,$_SESSION['id_attendance_sheet']);
+			else
+				Db::getInstance()->update_note($note,$email,$_SESSION['id_attendance_sheet']);		
 		}
 		$students_attendances_array =Db::getInstance()->select_students_attendances($_SESSION['id_attendance_sheet']);
 		$_POST['form_attendance_sheets'] = 'Working on it';
@@ -69,17 +72,13 @@ class TeacherController{
 		$_POST['form_attendance_sheets'] = '';
 	}
 	# Add a student in attendances
-	if(!empty($_POST['add_student'])){
-			$email_student = Db::getInstance()->select_student_name($_POST['name'],$_POST['first_name']);
-			if($email_student ==null){
-				$notification_student = "Il n'y a pas d'étudiant avec ce nom et ce prénom";
-				$_POST['form_attendance_sheets'] = 'Working on it';
-			}elseif($email_student !=null){
-				$result=Db::getInstance()->insert_student_attendance($email_student,$_SESSION['id_attendance_sheet'],$_SESSION['id_type_session']);	
+	$students_array = Db::getInstance()->select_students();
+	if(!empty($_POST['add_email_student'])){
+				$result=Db::getInstance()->insert_student_attendance($_POST['add_email_student'],$_SESSION['id_attendance_sheet'],$_SESSION['id_type_session']);	
 				if($result==0)
 					$notification_student = "L'étudiant est déja dans la feuille de présence";
 				$_POST['form_attendance_sheets'] = 'Working on it';
-			}
+			
 		$students_attendances_array =Db::getInstance()->select_students_attendances($_SESSION['id_attendance_sheet']);
 	}
 	###------------------------------------------------------------------###
