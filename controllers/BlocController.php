@@ -55,9 +55,7 @@ class BlocController {
 		##------------------------------------------------------------------------------------------------------###
 		##-----------------------------------------------COURSES------------------------------------------------###
 		##------------------------------------------------------------------------------------------------------###
-		
-		// TO DO : COMMENT AFFICHER PAR DEFAUT UN BLOC?
-				
+					
 		//----FILTER COURSES PER BLOC
 		if (!empty($_POST['courses_bloc1_selected'])){
 			$allcourses_array = Db::getInstance ()->select_courses($bloc1);
@@ -137,7 +135,6 @@ class BlocController {
 			$bloc_selected = $_POST ['bloc_selected'];
 			Db::getInstance()->delete_series_bloc($bloc_selected);		
 		}
-
 		$bloc_students_array = Db::getInstance()->select_students($bloc_selected);
 			
 		#--------------------------------------------------------------------------------------------###
@@ -205,10 +202,10 @@ class BlocController {
 		//IF BLOCS MANAGER
 		if ($_SESSION ['person_in_charge'] == 'blocs'){
  			//ADD STUDENTS
-//  			require_once (PATH_VIEWS . 'blocs.add.student.php');
-//  			if (count($allstudents_array)!=0){
-//  				require_once (PATH_VIEWS . 'bloc.students.table.php');
-//  			}
+ 			require_once (PATH_VIEWS . 'blocs.add.student.php');
+ 			if (count($allstudents_array)!=0){
+ 				require_once (PATH_VIEWS . 'bloc.students.table.php');
+ 			}
  			//ADD PROGRAMS
 // 			require_once (PATH_VIEWS . 'blocs.add.program.php');
 // 			if (count($allcourses_array)!=0){
@@ -222,15 +219,14 @@ class BlocController {
 // 			}
 			
 			//CREATE SESSIONS
-			require_once (PATH_VIEWS . 'blocs.create.sessions.php');
+// 			require_once (PATH_VIEWS . 'blocs.create.sessions.php');
 
-			// le require doit se faire UNIQUEMENT quand un des blocs est selectionné !
-			if (count($type_session_array)!=0){
-				require_once (PATH_VIEWS . 'bloc.sessions.table.php');
-			}
+// 			// le require doit se faire UNIQUEMENT quand un des blocs est selectionné !
+// 			if (count($type_session_array)!=0){
+// 				require_once (PATH_VIEWS . 'bloc.sessions.table.php');
+// 			}
 				
-				
-			
+
 			###------------------------------------------------------------------###
 			###-----------------------------FUNCTIONS----------------------------###
 			###------------------------------------------------------------------###

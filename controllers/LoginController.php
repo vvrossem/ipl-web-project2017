@@ -35,7 +35,7 @@ class LoginController {
 				elseif ($_SESSION ['person_in_charge'] == 'bloc1' || $_SESSION ['person_in_charge'] == 'bloc2' || $_SESSION ['person_in_charge'] == 'bloc3' || $_SESSION ['person_in_charge'] == 'blocs')
 					header ( "Location: index.php?action=bloc" );
 			}else{
-				$email_student = DB::getInstance()->select_student_email(htmlentities($_POST['login'])); 
+				$email_student = DB::getInstance()->select_student(htmlentities($_POST['login'])); 
 				if($email_student!=null){
 					$_SESSION['authenticated'] = 'student';
 					$_SESSION['name'] = $email_student->name();
