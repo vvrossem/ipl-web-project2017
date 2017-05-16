@@ -7,5 +7,6 @@
 	
 	<body>
 	<header>
-	<h1> Site de présence de l'IPL </h1>
-		</header>
+		<h1> Site de présence de l'IPL </h1>
+	</header>
+	

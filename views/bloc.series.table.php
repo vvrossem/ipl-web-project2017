@@ -2,7 +2,7 @@
 	<article>
 		<h2>Séries</h2>
 
-		<form action="index.php?action=bloc" method="post">
+		<form action="index.php?action=bloc&amp;see=createseries" method="post">
 		<input type="submit" name="series_update" value="Update">
 		
 		<table id="tableStudents">

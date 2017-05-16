@@ -8,11 +8,16 @@ class AdminController{
     public function run(){
 	$weeks_array = '';
 	$teachers_array = '';
-	$ok = 1;
 	# if someone write index.php?action=admin in the URL
 	if (empty($_SESSION['authenticated'])) {
 			header("Location: index.php?action=login"); 
 		die(); 
+	}elseif($_SESSION['authenticated'] == 'teacher'){
+		header("Location: index.php?action=teacher");
+			#die();
+	}elseif($_SESSION['authenticated'] == 'student'){
+		header("Location: index.php?action=student");
+		#die();
 	}
 	#if weeks file is already uploaded
 	if(Db::getInstance()->select_weeks()!==0){
@@ -52,7 +57,17 @@ class AdminController{
 					}		
 				}
 			}
-	}		
+	}
+	//Delete weeks
+	if(!empty($_POST['delete_weeks'])){
+		Db::getInstance()->delete_weeks();
+		$_POST['form_weeks']='';
+	}
+	
+	//Delete all data
+	if(!empty($_POST['delete_all'])){
+		Db::getInstance()->delete_all();
+	}
 	require_once(PATH_VIEWS . 'admin.php');
 	}
 	# insert all the data from agenda.properties into my data base
@@ -85,7 +100,6 @@ class AdminController{
 					$result[1] = "0$result[1]";
 				$result4 = "$result[3]-$result[2]-$result[1]";
 				$array [$i] = new Weeks ( $i+1, $result1, $result2, $result4);	
-				var_dump($array[$i]);
 				Db::getInstance()->insert_weeks($array[$i]);
 			}
 		}

@@ -1,0 +1,12 @@
+table td{
+	border-style: solid;
+	border-width: thin;
+	border-collapse: collapse;
+	background-color: #DCDCDC;
+}
+table th{
+	border-style: solid;
+	border-width: thin;
+	border-collapse: collapse;
+	background-color: #DCDCDC;
+}

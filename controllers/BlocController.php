@@ -22,220 +22,250 @@ class BlocController {
 		$user = $_SESSION ['person_in_charge'];
 		switch($user){
 			case 'bloc1' :
-				// add programme_bloc1.csv
-				// create series
-				// create session
+				
+				$bloc_selected=$bloc1;
+				require_once (PATH_VIEWS . 'bloc.navbar.php');
+				
+				$allcourses_array = $this->insertCourses();
+				$bloc_series_array = $this->createSeries ();
+				$type_session_array = $this->createSessions($bloc1);
+				
+				//ARRAYS
+				$type_session_array = Db::getInstance()->select_type_session_serie($bloc_selected);
+				$allcourses_array = Db::getInstance ()->select_courses($bloc_selected);
+				$bloc_students_array = Db::getInstance()->select_students($bloc_selected);
+				$bloc_series_array = Db::getInstance()->select_series($bloc_selected);
+				$bloc_courses_array = Db::getInstance ()->select_courses($bloc_selected);
+				
+				if (!empty($_GET['see']) && $_GET['see']=='addsingleprogram'){
+					require_once (PATH_VIEWS . 'bloc.add.program.php');
+					if (count($allcourses_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.program.table.php');
+					}
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='createseries'){
+					require_once (PATH_VIEWS . 'bloc.create.series.php');
+					if (count($type_session_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.series.table.php');
+					}
+						
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='createsessions'){
+					require_once (PATH_VIEWS . 'blocs.create.sessions.php');
+					if (count($type_session_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.sessions.table.php');
+					}
+				
+				}
 				break;
+				
 			case 'bloc2' :
-				// add programme_bloc2.csv
-				// create series
-				// create session
+				$bloc_selected=$bloc2;
+				require_once (PATH_VIEWS . 'bloc.navbar.php');
+				
+				$allcourses_array = $this->insertCourses();
+				$bloc_series_array = $this->createSeries ();
+				$type_session_array = $this->createSessions($bloc2);
+				
+				//ARRAYS
+				$type_session_array = Db::getInstance()->select_type_session_serie($bloc_selected);
+				$allcourses_array = Db::getInstance ()->select_courses($bloc_selected);
+				$bloc_students_array = Db::getInstance()->select_students($bloc_selected);
+				$bloc_series_array = Db::getInstance()->select_series($bloc_selected);
+				$bloc_courses_array = Db::getInstance ()->select_courses($bloc_selected);
+				
+				if (!empty($_GET['see']) && $_GET['see']=='addsingleprogram'){
+					require_once (PATH_VIEWS . 'bloc.add.program.php');
+					if (count($allcourses_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.program.table.php');
+					}
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='createseries'){
+					require_once (PATH_VIEWS . 'bloc.create.series.php');
+					require_once (PATH_VIEWS . 'bloc.series.table.php');
+				
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='createsessions'){
+					require_once (PATH_VIEWS . 'blocs.create.sessions.php');
+					// le require doit se faire UNIQUEMENT quand un des blocs est selectionné !
+					if (count($type_session_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.sessions.table.php');
+					}
+				
+				}
+				
 				break;
+				
 			case 'bloc3' :
-				// add programme_bloc3.csv
-				// create series
-				// create session
+				$bloc_selected=$bloc3;
+				require_once (PATH_VIEWS . 'bloc.navbar.php');
+				
+				$allcourses_array = $this->insertCourses();
+				$bloc_series_array = $this->createSeries ();
+				$type_session_array = $this->createSessions($bloc3);
+				
+				
+				//ARRAYS
+				$type_session_array = Db::getInstance()->select_type_session_serie($bloc_selected);
+				$allcourses_array = Db::getInstance ()->select_courses($bloc_selected);
+				$bloc_students_array = Db::getInstance()->select_students($bloc_selected);
+				$bloc_series_array = Db::getInstance()->select_series($bloc_selected);
+				$bloc_courses_array = Db::getInstance ()->select_courses($bloc_selected);
+				
+				if (!empty($_GET['see']) && $_GET['see']=='addsingleprogram'){
+					require_once (PATH_VIEWS . 'bloc.add.program.php');
+					if (count($allcourses_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.program.table.php');
+					}
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='createseries'){
+					require_once (PATH_VIEWS . 'bloc.create.series.php');
+					require_once (PATH_VIEWS . 'bloc.series.table.php');
+				
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='createsessions'){
+					require_once (PATH_VIEWS . 'blocs.create.sessions.php');
+					// le require doit se faire UNIQUEMENT quand un des blocs est selectionné !
+					if (count($type_session_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.sessions.table.php');
+					}
+				
+				}
 				break;
+				
 			case 'blocs' :
 				// ici les fonctionnalités du blocs manager
+				require_once (PATH_VIEWS . 'blocs.navbar.php');
 				// add students
 				$allstudents_array = $this->insertStudents();
-				// add programe_bloc[123].csv
 				$allcourses_array = $this->insertCourses();
-				//create series
-				//step 1 créer séries
 				$bloc_series_array = $this->createSeries ();
-				//step 2 filtrer les étudiants par bloc
-				$bloc_students_array = Db::getInstance()->select_students($bloc_selected);
 				
+
+				//----FILTRES
+				//STUDENTS
+				if (!empty($_POST['students_bloc1_selected'])){
+					$bloc_selected = $bloc1;
+				}
+				elseif (!empty($_POST['students_bloc2_selected'])){
+					$bloc_selected = $bloc2;	
+				}
+				elseif (!empty($_POST['students_bloc3_selected'])){
+					$bloc_selected = $bloc3;	
+				}
+				
+				//COURSES
+				if (!empty($_POST['courses_bloc1_selected'])){
+					$bloc_selected = $bloc1;
+				}
+				elseif (!empty($_POST['courses_bloc2_selected'])){
+					$bloc_selected = $bloc2;	
+				}
+				elseif (!empty($_POST['courses_bloc3_selected'])){
+					$bloc_selected = $bloc3;
+				}
+				
+				//SERIES
+				if (!empty($_POST['serie_bloc1_selected'])){
+					$bloc_selected = $bloc1;
+				}
+				elseif (!empty($_POST['serie_bloc2_selected'])){
+					$bloc_selected = $bloc2;
+				}
+				elseif (!empty($_POST['serie_bloc3_selected'])){
+					$bloc_selected = $bloc3;
+				}
+				
+				//SEANCES
+				if (! empty ( $_POST ['sessions_bloc1_selected'] )) {
+					$bloc_selected = $bloc1;
+				}
+				elseif (! empty ( $_POST ['sessions_bloc2_selected'] )) {
+					$bloc_selected = $bloc2;
+				}
+				elseif (! empty ( $_POST ['sessions_bloc3_selected'] )) {
+					$bloc_selected = $bloc3;
+				}
+				
+				
+				//----UPDATE SERIE REGARDING BLOC
+				if (!empty ($_POST['series_update']) && !empty ($_POST['student'])){
+					$student_to_update = $_POST['student'];
+					foreach ($student_to_update as $email => $serie){
+						Db::getInstance()->update_student_serie($email, $serie);
+					}
+				}
+				
+				//----DELETE SERIE REGARDING BLOC
+				if (!empty ($_POST['delete_series']) && !empty ($_POST['bloc_selected'])) {
+					$bloc_selected = $_POST ['bloc_selected'];
+					Db::getInstance()->delete_series_bloc($bloc_selected);
+				}
+				
+				$type_session_array = $this->createSessions($bloc_selected);
+				
+				//ARRAYS
+				$type_session_array = Db::getInstance()->select_type_session_serie($bloc_selected);
+				$allcourses_array = Db::getInstance ()->select_courses($bloc_selected);		
+				$allstudents_array = Db::getInstance ()->select_students($bloc_selected);
+				$bloc_students_array = Db::getInstance()->select_students($bloc_selected);
+				$bloc_series_array = Db::getInstance()->select_series($bloc_selected);
+				$bloc_courses_array = Db::getInstance ()->select_courses($bloc_selected);
+				
+				
+				// VIEWS
+				if (!empty($_GET['see']) && $_GET['see']=='addstudent'){
+					require_once (PATH_VIEWS . 'blocs.add.student.php');
+					if (count($allstudents_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.students.table.php');
+					}
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='addcourses'){
+					require_once (PATH_VIEWS . 'blocs.add.program.php');
+					if (count($allcourses_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.program.table.php');
+					}
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='createseries'){
+					require_once (PATH_VIEWS . 'bloc.create.series.php');
+					require_once (PATH_VIEWS . 'bloc.series.table.php');
+					
+				}
+				elseif (!empty($_GET['see']) && $_GET['see']=='createsessions'){
+					require_once (PATH_VIEWS . 'blocs.create.sessions.php');
+					// le require doit se faire UNIQUEMENT quand un des blocs est selectionné !
+					if (count($type_session_array)!=0){
+						require_once (PATH_VIEWS . 'bloc.sessions.table.php');
+					}
+						
+				}
 				break;
 		}
-		
-		
-		##------------------------------------------------------------------------------------------------------###
-		##-----------------------------------------------COURSES------------------------------------------------###
-		##------------------------------------------------------------------------------------------------------###
-		
-		// TO DO : COMMENT AFFICHER PAR DEFAUT UN BLOC?
-				
-		//----FILTER COURSES PER BLOC
-		if (!empty($_POST['courses_bloc1_selected'])){
-			$allcourses_array = Db::getInstance ()->select_courses($bloc1);
-		}
-		if (!empty($_POST['courses_bloc2_selected'])){
-			$allcourses_array = Db::getInstance ()->select_courses($bloc2);		
-		}
-		if (!empty($_POST['courses_bloc3_selected'])){
-			$allcourses_array = Db::getInstance ()->select_courses($bloc3);		
-		}
-		
-
-		//----DELETE ALL COURSES
-		if (! empty ( $_POST ['bloc_delete'] )) {
-			Db::getInstance()->delete_course();
-			$allcourses_array = Db::getInstance ()->select_courses ();		
-		}
-		
-		###------------------------------------------------------------------------------------------###
-		###----------------------------------------------STUDENTS------------------------------------###
-		###------------------------------------------------------------------------------------------###
-
-		//----FILTER STUDENT
-		if (!empty($_POST['students_bloc1_selected'])){
-			$allstudents_array = Db::getInstance ()->select_students($bloc1);		
-		}
-		if (!empty($_POST['students_bloc2_selected'])){
-			$allstudents_array = Db::getInstance ()->select_students($bloc2);
-				
-		}	
-		if (!empty($_POST['students_bloc3_selected'])){
-			$allstudents_array = Db::getInstance ()->select_students($bloc3);
-				
-		}
-		$bloc_students_array = Db::getInstance()->select_students($bloc_selected);
-		
-		
-		//----DELETE STUDENTS
-		if (!empty ($_POST ['students_delete'])){
-			Db::getInstance()->delete_students();
-			$allstudents_array = Db::getInstance ()->select_students ();
-		}
-		
-		###-----------------------------------------------------------------------------------###
-		###--------------------------SERIES---------------------------------------------------###
-		###-----------------------------------------------------------------------------------###
-		
-		//----FILTER STUDENTS PER BLOC FOR SELECTING SERIES
-		if (!empty($_POST['serie_bloc1_selected'])){
-			$bloc_students_array = Db::getInstance()->select_students($bloc1);
-			$bloc_series_array = Db::getInstance()->select_series($bloc1);
-			$bloc_selected = $bloc1;	
-		}
-		if (!empty($_POST['serie_bloc2_selected'])){
-			$bloc_students_array = Db::getInstance()->select_students($bloc2);
-			$bloc_series_array = Db::getInstance()->select_series($bloc2);
-			$bloc_selected = $bloc2;		
-		}
-		if (!empty($_POST['serie_bloc3_selected'])){
-			$bloc_students_array = Db::getInstance()->select_students($bloc3);
-			$bloc_series_array = Db::getInstance()->select_series($bloc3);	
-			$bloc_selected = $bloc3;		
-		}
-		
-		
-		//----UPDATE SERIE REGARDING BLOC
-		if (!empty ($_POST['series_update']) && !empty ($_POST['student'])){
-			$student_to_update = $_POST['student'];
-			foreach ($student_to_update as $email => $serie){
-				Db::getInstance()->update_student_serie($email, $serie);		
-			}
-		}
-
-		//----DELETE SERIE REGARDING BLOC
-		if (!empty ($_POST['delete_series']) && !empty ($_POST['bloc_selected'])) {
-			$bloc_selected = $_POST ['bloc_selected'];
-			Db::getInstance()->delete_series_bloc($bloc_selected);		
-		}
-		$bloc_students_array = Db::getInstance()->select_students($bloc_selected);
-			
-		#--------------------------------------------------------------------------------------------###
-		#-----------------------------------SESSIONS-------------------------------------------------###
-		#--------------------------------------------------------------------------------------------###
-			
-		// ---CREATE SEANCES
-		// par défaut, bloc1 sélectionné
-		$bloc_courses_array = Db::getInstance ()->select_courses ('Bloc1');
-		$bloc_series_array = Db::getInstance ()->select_series ('Bloc1');
-		
-		if (! empty ( $_POST ['sessions_bloc1_selected'] )) {
-			$bloc_selected = $_POST ['sessions_bloc1_selected'];
-				
-		}
-		elseif (! empty ( $_POST ['sessions_bloc2_selected'] )) {
-			$bloc_selected = $_POST ['sessions_bloc2_selected'];
-				
-		}
-		elseif (! empty ( $_POST ['sessions_bloc3_selected'] )) {
-			$bloc_selected = $_POST ['sessions_bloc3_selected'];
-				
-		}
-			
-		$bloc_courses_array = Db::getInstance ()->select_courses ( $bloc_selected );
-		$bloc_series_array = Db::getInstance ()->select_series ( $bloc_selected );
-		
-		if (! empty ( $_POST ['create_sessions'] )) {	
-			if (! empty ( $_POST ['selected_ue_aa'] || !empty($_POST ['session_name']))) {
+	}
+	/**
+	 */
+	private function createSessions($bloc_selected) {
+		if (! empty ( $_POST ['create_sessions'] )) {
+			if (! empty ( $_POST ['selected_ue_aa'] || ! empty ( $_POST ['session_name'] ) )) {
 				$selected_ue_aa = $_POST ['selected_ue_aa'];
 				$type_sessions_name = $_POST ['session_name'];
 				$attendance_taking_type = $_POST ['attendance_taking_type'];
-								
+				
 				$last_id = Db::getInstance ()->insert_type_sessions ( $selected_ue_aa, $type_sessions_name, $attendance_taking_type );
-
-				//var_dump ( $last_id );
 				
 				if (! empty ( $_POST ['serie'] )) {
 					$selected_serie = $_POST ['serie'];
 					foreach ( $selected_serie as $key => $value ) {
-						//var_dump ( $key );
-						//var_dump ( $value );
+						
 						Db::getInstance ()->insert_type_sessions_serie ( $value, $last_id );
 					}
 				}
 			}
-		}
-		$type_session_array = Db::getInstance()->select_type_session_serie($bloc_selected);
-
-		
-		
-// 		$test_array = Db::getInstance()->select_type_session($bloc_selected);
-// 		var_dump($test_array);
-// 		var_dump($test_array->id_type_session());
-		
-
-		
-		
-		###--------------------------------------------------------------------------------###
-		###-------------------------VIEWS--------------------------------------------------###
-		###--------------------------------------------------------------------------------###
-		
-		//TEACHER VIEW
-		//require_once (PATH_VIEWS . 'teacher.php');
-		
-		//IF BLOCS MANAGER
-		if ($_SESSION ['person_in_charge'] == 'blocs'){
- 			//ADD STUDENTS
-//  			require_once (PATH_VIEWS . 'blocs.add.student.php');
-//  			if (count($allstudents_array)!=0){
-//  				require_once (PATH_VIEWS . 'bloc.students.table.php');
-//  			}
- 			//ADD PROGRAMS
-// 			require_once (PATH_VIEWS . 'blocs.add.program.php');
-// 			if (count($allcourses_array)!=0){
-// 				require_once (PATH_VIEWS . 'bloc.program.table.php');
-// 			}
-			//CREATE SERIES
-// 			require_once (PATH_VIEWS . 'bloc.create.series.php');
-			
-// 			if (!empty($_POST['serie_bloc1_selected'])|| !empty($_POST['serie_bloc2_selected'])	|| !empty($_POST['serie_bloc3_selected'])){
-// 					require_once (PATH_VIEWS . 'bloc.series.table.php');
-// 			}
-			
-			//CREATE SESSIONS
-			require_once (PATH_VIEWS . 'blocs.create.sessions.php');
-			// le require doit se faire UNIQUEMENT quand un des blocs est selectionné !
-			if (count($type_session_array)!=0){
-				require_once (PATH_VIEWS . 'bloc.sessions.table.php');
-			}
-				
-				
-			
-			###------------------------------------------------------------------###
-			###-----------------------------FUNCTIONS----------------------------###
-			###------------------------------------------------------------------###
-				
-			
-		}
+		} 
+		return Db::getInstance()->select_type_session_serie($bloc_selected);
 	}
+
+
 	/**
 	 * 
 	 * 
@@ -297,6 +327,7 @@ class BlocController {
 				move_uploaded_file ( $origine, $destination );
 				if (! empty ( $_POST ['bloc_selected'] )) {
 					$bloc_selected = $_POST ['bloc_selected'];
+					// A MODIFIER
 					if ($bloc_selected == 'Bloc1') {
 						$allcourses_array = $this->getallcourses ( 'conf/programme_bloc1.csv', $bloc_selected );
 						return Db::getInstance ()->select_courses ( $bloc_selected );
@@ -312,9 +343,6 @@ class BlocController {
 		}
 	}
 
-	
-	
-	
 
 	
 	// read programme_bloc[123].csv file and return array

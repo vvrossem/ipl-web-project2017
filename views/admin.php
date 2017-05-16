@@ -29,8 +29,16 @@
 				<?php } ?>
 		</tbody>
 		</table>
-		<?php } ?>			
+		<?php if(Db::getInstance()->select_attendances_sheets()==0){ ?>
+		<p>Supprimer l'agenda :
+			<form action = "index.php?action=admin" method = "post">
+			<input type = "submit" name = "delete_weeks" value = "Supprimer l'agenda" />
+			</form>
+		</p>
+		<?php } ?>		
 	</article>
+		<?php } ?>	
+		
 	<article>
 		<h2> Introduire les professeurs </h2>
 		<?php  if(empty($_POST['form_weeks'])){ ?>
@@ -73,5 +81,10 @@
 	</article>	
 	<article>	
 		<p><a href="index.php?action=logout">Se déconnecter</a></p>
+		<p>Supprimer les données annuelles :
+			<form action = "index.php?action=admin" method = "post">
+			<input type = "submit" name = "delete_all" value = "Tout supprimer" />
+			</form>
+		</p>
 	</article>
 </section>
