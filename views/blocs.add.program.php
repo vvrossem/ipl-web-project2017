@@ -1,7 +1,7 @@
 <section id="">
 	<article>
 		<h2>Chargez les programmes des blocs</h2>
-		<form enctype="multipart/form-data" action="index.php?action=bloc" method="post">
+		<form enctype="multipart/form-data" action="index.php?action=bloc&amp;see=addcourses" method="post">
 			<p>Sélectionnez le fichier</p>
 			<input type="file" name="bloc_file" />
 			<input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
@@ -15,7 +15,7 @@
 	
 	<article>
 		<h2>Filtrer les cours par blocs</h2>
-		<form enctype="multipart/form-data" action="index.php?action=bloc" method="post">
+		<form enctype="multipart/form-data" action="index.php?action=bloc&amp;see=addcourses" method="post">
 			<p> Choisissez le bloc </p> 
 			<input type = "submit" name = "courses_bloc1_selected" value ="Bloc 1"/>
 			<input type = "submit" name = "courses_bloc2_selected" value ="Bloc 2"/>
@@ -25,7 +25,7 @@
 	
 	<article>
 		<h2>Supprimer les programmes de bloc</h2>
-		<form enctype="multipart/form-data" action="index.php?action=bloc" method="post">
+		<form enctype="multipart/form-data" action="index.php?action=bloc&amp;see=addcourses" method="post">
 			<p>	<input type="submit" name="bloc_delete" value="Supprimer"> </p>
 		</form>
 	</article>
