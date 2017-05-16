@@ -331,25 +331,7 @@
 		###-----------------------------TYPE_SESSIONS------------------------###
 		###------------------------------------------------------------------###
 		
-		//select session type
-// 		public function select_type_session($bloc=''){
-// 			if ($bloc!='')
-// 				$query = 'SELECT ts.id_type_session, ts.code, ts.name_type_sessions, ts.attendance_taking_type
-// 				FROM type_sessions ts, courses co
-// 				WHERE ts.code = co.code
-// 				AND co.bloc ='. $this->_db->quote($bloc);
-// 			else 
-// 				$query = 'SELECT * FROM type_sessions';
-// 			$result = $this->_db->query ( $query );
-// 			$table = array ();
-// 			if ($result->rowcount () != 0) {
-// 				while ( $row = $result->fetch () ) {
-// 					$table [] = new Type_Sessions ( $row->id_type_session, $row->code, $row->name_type_sessions, $row->attendance_taking_type);
-// 				}
-// 			}
-// 			return $table;
-			
-// 		}
+
 		public function select_type_session($bloc = '') {
 			
 			$query = 'SELECT DISTINCT ts.id_type_session, ts.code, ts.name_type_sessions, ts.attendance_taking_type, co.name

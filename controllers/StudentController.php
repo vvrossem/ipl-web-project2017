@@ -6,6 +6,8 @@ class StudentController{
     }
     
     public function run(){
+    	
+    	
 	require_once(PATH_VIEWS . 'student.php');
 	}
 }

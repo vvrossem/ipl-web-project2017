@@ -36,7 +36,7 @@
 					<option value="chiffre">chiffre</option>
 				</select>	 	
 			</div>
-
+			<?php if (! empty ( $_POST ['sessions_bloc1_selected'] ) || ! empty ( $_POST ['sessions_bloc2_selected'] ) || ! empty ( $_POST ['sessions_bloc3_selected'] )) {	?>
 			<div>
 				<h3>Sélectionnez la/les série(s) concernée(s)</h3>
 				<?php foreach($bloc_series_array as $i => $serie ) {?>
@@ -50,5 +50,6 @@
 			<div>
 				<button name = "create_sessions" value="create_sessions">Créér</button>
 			</div>
+			<?php }?>
 		</form>
 	</article>
